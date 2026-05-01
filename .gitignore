@@ -1,0 +1,59 @@
+# ---------------------------------------------------------------
+# Computational Canvas — root .gitignore
+# Each subproject (e.g. prototype/) may have its own .gitignore;
+# this file covers the repository root and acts as a safety net.
+# ---------------------------------------------------------------
+
+# --- Node / Vite (prototype) ---------------------------------------------
+node_modules/
+dist/
+dist-ssr/
+.vite/
+.cache/
+coverage/
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# --- Python (future canvas server) ---------------------------------------
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+.uv/
+.uv-cache/
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+
+# --- Environment / secrets ----------------------------------------------
+.env
+.env.*
+!.env.example
+*.local
+
+# --- Editors / OS --------------------------------------------------------
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db

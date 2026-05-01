@@ -1,0 +1,73 @@
+name: Deploy prototype to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Required for actions/deploy-pages to publish the site.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, but don't cancel an in-progress run
+# (so a deploy that's already mid-flight finishes cleanly).
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: prototype/package-lock.json
+
+      # Computes the correct base path for the repo automatically:
+      #   - project page (e.g. user/repo): base_path = "/repo"
+      #   - user/org page (user.github.io): base_path = ""
+      # Concatenating "/" below produces "/repo/" or "/" respectively, which
+      # is exactly what Vite's --base expects.
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Install dependencies
+        working-directory: prototype
+        run: npm ci
+
+      - name: Build
+        working-directory: prototype
+        env:
+          BASE: ${{ steps.pages.outputs.base_path }}/
+        run: npm run build -- --base "$BASE"
+
+      # Stops GitHub Pages from running Jekyll on the artifact, which would
+      # strip files/folders starting with an underscore (Vite sometimes emits
+      # those for chunked assets).
+      - name: Disable Jekyll
+        run: touch prototype/dist/.nojekyll
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: prototype/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
