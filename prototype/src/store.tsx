@@ -503,7 +503,9 @@ function reducer(state: CanvasState, action: Action): CanvasState {
       return { ...state, chat: [] };
     case "CLEAR_CANVAS": {
       const main = state.environments["env_main"];
-      const environments = main ? { env_main: { ...main, position: { x: 0, y: 0 }, size: { w: 0, h: 0 } } } : {};
+      const environments: Record<string, Environment> = main
+        ? { env_main: { ...main, position: { x: 0, y: 0 }, size: { w: 0, h: 0 } } }
+        : {};
       const envOrder = main ? ["env_main"] : [];
       return {
         ...state,
